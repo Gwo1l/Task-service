@@ -7,11 +7,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+//@Getter
+//@Setter
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+//@Builder
 @Entity
 @Table(name = "projects")
 public class Project {
@@ -27,15 +29,14 @@ public class Project {
     )
     private Long id;
     private String name;
-    @Builder.Default
+    //@Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
-    @Builder.Default
+    //@Builder.Default
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<TaskState> taskStates = new ArrayList<>();
 
     public Project(String name) {
         this.name = name;
     }
-
 }
