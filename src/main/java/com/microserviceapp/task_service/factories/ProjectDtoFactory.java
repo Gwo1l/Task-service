@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProjectDtoFactory {
     public ProjectDto makeProjectDto(Project project) {
+        ProjectDto projectDto = new ProjectDto();
+        projectDto.setName("Buba");
         return ProjectDto.builder()
                 .id(project.getId())
                 .name(project.getName())

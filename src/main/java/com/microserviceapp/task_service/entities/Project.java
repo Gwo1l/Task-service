@@ -1,10 +1,7 @@
 package com.microserviceapp.task_service.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,6 +11,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "projects")
 public class Project {
@@ -29,9 +27,15 @@ public class Project {
     )
     private Long id;
     private String name;
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
+    @Builder.Default
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<TaskState> taskStates = new ArrayList<>();
+
+    public Project(String name) {
+        this.name = name;
+    }
 
 }
