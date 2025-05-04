@@ -1,10 +1,7 @@
 package com.microserviceapp.task_service.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,6 +11,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "task_states")
 public class TaskState {
@@ -31,6 +29,7 @@ public class TaskState {
     @JoinColumn(name = "project_id")
     private Project project;
     @OneToMany(mappedBy = "taskState")
+    @Builder.Default
     private List<Task> tasks = new ArrayList<>();
 
 }

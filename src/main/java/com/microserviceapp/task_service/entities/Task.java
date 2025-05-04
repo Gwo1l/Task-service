@@ -1,10 +1,7 @@
 package com.microserviceapp.task_service.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Entity
 @Table(name = "tasks")
 public class Task {
@@ -20,6 +18,7 @@ public class Task {
     private Long id;
     private String name;
     private String description;
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
     @ManyToOne(fetch = FetchType.LAZY)
