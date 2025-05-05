@@ -28,8 +28,8 @@ public class TaskState {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
-    @OneToMany(mappedBy = "taskState")
     @Builder.Default
+    @OneToMany(mappedBy = "taskState", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks = new ArrayList<>();
 
 }

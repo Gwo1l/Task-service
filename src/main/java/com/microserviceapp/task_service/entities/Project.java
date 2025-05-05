@@ -31,7 +31,7 @@ public class Project {
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt;
     @Builder.Default
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TaskState> taskStates = new ArrayList<>();
 
 
