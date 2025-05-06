@@ -1,7 +1,7 @@
-package com.microserviceapp.task_service.repositories;
+package com.microserviceapp.task_service.data.repositories;
 
-import com.microserviceapp.task_service.entities.Task;
-import com.microserviceapp.task_service.entities.TaskState;
+import com.microserviceapp.task_service.data.entities.Task;
+import com.microserviceapp.task_service.data.entities.TaskState;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

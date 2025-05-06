@@ -1,6 +1,6 @@
 package com.microserviceapp.task_service.controllers;
 
-import com.microserviceapp.task_service.dto.TaskStateDto;
+import com.microserviceapp.task_service.data.dto.TaskStateDto;
 import com.microserviceapp.task_service.services.TaskStateService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

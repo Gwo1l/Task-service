@@ -1,4 +1,4 @@
-package com.microserviceapp.task_service.entities;
+package com.microserviceapp.task_service.data.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

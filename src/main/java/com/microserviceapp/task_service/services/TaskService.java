@@ -1,13 +1,13 @@
 package com.microserviceapp.task_service.services;
 
-import com.microserviceapp.task_service.dto.TaskDto;
-import com.microserviceapp.task_service.entities.Project;
-import com.microserviceapp.task_service.entities.Task;
-import com.microserviceapp.task_service.entities.TaskState;
+import com.microserviceapp.task_service.data.dto.TaskDto;
+import com.microserviceapp.task_service.data.entities.Project;
+import com.microserviceapp.task_service.data.entities.Task;
+import com.microserviceapp.task_service.data.entities.TaskState;
 import com.microserviceapp.task_service.exceptions.BadRequestException;
 import com.microserviceapp.task_service.exceptions.NotFoundException;
-import com.microserviceapp.task_service.factories.TaskDtoFactory;
-import com.microserviceapp.task_service.repositories.TaskRepository;
+import com.microserviceapp.task_service.data.factories.TaskDtoFactory;
+import com.microserviceapp.task_service.data.repositories.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package com.microserviceapp.task_service.dto;
+package com.microserviceapp.task_service.data.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

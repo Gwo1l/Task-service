@@ -1,6 +1,6 @@
 package com.microserviceapp.task_service.controllers;
 
-import com.microserviceapp.task_service.dto.TaskDto;
+import com.microserviceapp.task_service.data.dto.TaskDto;
 import com.microserviceapp.task_service.services.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;

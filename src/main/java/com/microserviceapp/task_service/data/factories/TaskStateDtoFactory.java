@@ -1,7 +1,7 @@
-package com.microserviceapp.task_service.factories;
+package com.microserviceapp.task_service.data.factories;
 
-import com.microserviceapp.task_service.dto.TaskStateDto;
-import com.microserviceapp.task_service.entities.TaskState;
+import com.microserviceapp.task_service.data.dto.TaskStateDto;
+import com.microserviceapp.task_service.data.entities.TaskState;
 import org.springframework.stereotype.Component;
 
 @Component
