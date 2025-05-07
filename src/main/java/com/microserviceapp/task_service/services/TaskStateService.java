@@ -8,12 +8,14 @@ import com.microserviceapp.task_service.exceptions.NotFoundException;
 import com.microserviceapp.task_service.data.factories.TaskStateDtoFactory;
 import com.microserviceapp.task_service.data.repositories.TaskStateRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -27,6 +29,7 @@ public class TaskStateService {
     private static final String NAME_BLANK_MSG = "Имя состояния не может быть пустым!";
 
     public List<TaskStateDto> getTaskStates(Long projectId) {
+        log.debug("Getting task states for project ID={}", projectId);
         Project project = projectService.getProjectOrThrowException(projectId);
         return project.getTaskStates()
                 .stream()
@@ -35,6 +38,7 @@ public class TaskStateService {
     }
 
     public TaskStateDto createTaskState(Long projectId, String name) {
+        log.debug("Creating task state in project ID={}. Name={}", projectId, name);
         validateName(name);
         Project project = projectService.getProjectOrThrowException(projectId);
         checkTaskStateNameUniqueness(name, project);
@@ -48,29 +52,33 @@ public class TaskStateService {
         );
 
         project.getTaskStates().add(taskState);
-        //log.info("Created task state '{}' in project {}", name, projectId);
+        log.info("Created task state '{}' in project {}", name, projectId);
         return taskStateDtoFactory.makeTaskStateDto(taskState);
     }
 
     public TaskStateDto editTaskState(Long projectId, Long taskStateId, String newName) {
+        log.debug("Editing task state with ID={} in project ID={} on new name={}", taskStateId, projectId, newName);
         validateName(newName);
         Project project = projectService.getProjectOrThrowException(projectId);
         TaskState taskState = getTaskStateOrThrowException(taskStateId, project);
         checkTaskStateNameUniquenessAndNotSame(newName, project, taskStateId);
 
         taskState.setName(newName);
+        log.info("Task state with ID={} in project {} changed name on {}", taskState, projectId, newName);
         return taskStateDtoFactory.makeTaskStateDto(taskState);
     }
 
     public void deleteTaskState(Long projectId, Long taskStateId) {
+        log.warn("Deleting task state with ID={} from project {}", taskStateId, projectId);
         Project project = projectService.getProjectOrThrowException(projectId);
         TaskState taskState = getTaskStateOrThrowException(taskStateId, project);
         taskStateRepository.delete(taskState);
-        //log.info("Deleted task state {} from project {}", taskStateId, projectId);
+        log.info("Deleted task state with ID={} from project {}", taskStateId, projectId);
     }
 
     private void validateName(String name) {
         if (name == null || name.isBlank()) {
+            log.error("Task state name is empty");
             throw new BadRequestException(NAME_BLANK_MSG);
         }
     }
@@ -89,6 +97,7 @@ public class TaskStateService {
                 .filter(ts -> ts.getName().equalsIgnoreCase(name))
                 .findAny()
                 .ifPresent(ts -> {
+                    log.error("Task state name={} already exists", name);
                     throw new BadRequestException(String.format(TASK_STATE_EXISTS_MSG, name));
                 });
     }
@@ -99,6 +108,7 @@ public class TaskStateService {
                 .filter(ts -> ts.getName().equalsIgnoreCase(name))
                 .findAny()
                 .ifPresent(ts -> {
+                    log.error("Task state name={} already exists", name);
                     throw new BadRequestException(String.format(TASK_STATE_EXISTS_MSG, name));
                 });
     }
