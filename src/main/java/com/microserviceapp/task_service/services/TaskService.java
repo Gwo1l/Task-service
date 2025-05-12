@@ -1,5 +1,5 @@
 package com.microserviceapp.task_service.services;
-
+import gwoll.inc.*;
 import com.microserviceapp.task_service.data.dto.TaskDto;
 import com.microserviceapp.task_service.data.entities.Project;
 import com.microserviceapp.task_service.data.entities.Task;
@@ -24,58 +24,105 @@ public class TaskService {
     private static final String TASK_EXISTS_MSG = "Задание с таким именем \"%s\" уже существует";
     private static final String NAME_BLANK_MSG = "Название задания не может быть пустым";
     private static final String TASK_NOT_FOUND_MSG = "Задания с таким Id \"%s\" не существует";
+    private static final String NAME_FIELD = "name";
     private final ProjectService projectService;
     private final TaskStateService taskStateService;
+    private final KafkaProducer kafkaProducer;
     private final TaskRepository taskRepository;
     private final TaskDtoFactory taskDtoFactory;
     public List<TaskDto> getTasks(Long projectId, Long taskStateId) {
         log.debug("Getting tasks from project with ID={} and task state with ID={}", projectId, taskStateId);
-        TaskState taskState = getTaskStateFromProjectOrThrowException(projectId, taskStateId);
+        Project project = projectService.getProjectOrThrowException(projectId);
+        TaskState taskState = taskStateService.getTaskStateOrThrowException(taskStateId, project);
         return taskState.getTasks().stream().map(taskDtoFactory::makeTaskDto).toList();
     }
 
     public TaskDto createTask(Long projectId, Long taskStateId, String taskName) {
         log.debug("Creating task in project ID={}, state ID={}. Name of task: {}", projectId, taskStateId, taskName);
         validateName(taskName);
-        TaskState taskState = getTaskStateFromProjectOrThrowException(projectId, taskStateId);
+        Project project = projectService.getProjectOrThrowException(projectId);
+        TaskState taskState = taskStateService.getTaskStateOrThrowException(taskStateId, project);
         checkTaskNameUniqueness(taskName, taskState);
-
+        LocalDateTime createdTime = LocalDateTime.now();
         Task task = taskRepository.save(
                 Task.builder()
                         .name(taskName)
-                        .createdAt(LocalDateTime.now())
+                        .createdAt(createdTime)
                         .taskState(taskState)
+                        .creatorId(1L)
                         .build());
+
         taskState.getTasks().add(task);
         log.info("Task created: ID={}, Name={}", task.getId(), task.getName());
+        kafkaProducer.sendEvent(
+                CreateTaskEvent.builder()
+                    .projectName(project.getName())
+                    .taskStateName(taskState.getName())
+                    .taskName(task.getName())
+                    .eventType(EventType.CREATED)
+                    .timestamp(createdTime)
+                    .taskName(taskName)
+                    .creatorId(1L)
+                    .build());
         return taskDtoFactory.makeTaskDto(task);
     }
-
     public TaskDto editTask(Long projectId, Long taskStateId, Long taskId, String taskName) {
         log.debug("Editing task in project ID={}, state ID={} on new name={}", projectId, taskStateId, taskName);
         validateName(taskName);
-        TaskState taskState = getTaskStateFromProjectOrThrowException(projectId, taskStateId);
+        Project project = projectService.getProjectOrThrowException(projectId);
+        TaskState taskState = taskStateService.getTaskStateOrThrowException(taskStateId, project);
         checkTaskNameUniquenessAndNotSame(taskName, taskState, taskId);
         Task task = getTaskOrThrowException(taskId, taskState);
 
+        String oldName = task.getName();
         task.setName(taskName);
+        LocalDateTime updateTime = LocalDateTime.now();
+        task.setUpdatedAt(updateTime);
         log.info("Task edited: ID={}, new name={}", taskId, task.getName());
+        kafkaProducer.sendEvent(
+                UpdateTaskEvent.builder()
+                        .projectName(project.getName())
+                        .taskStateName(taskState.getName())
+                        .taskName(task.getName())
+                        .eventType(EventType.UPDATED)
+                        .timestamp(updateTime)
+                        .creatorId(1L)
+                        .assigneeId(1L)
+                        .fieldName(NAME_FIELD)
+                        .oldValue(oldName)
+                        .newValue(taskName)
+                        .build()
+                );
         return taskDtoFactory.makeTaskDto(task);
     }
 
 
     public void deleteTask(Long projectId, Long taskStateId, Long taskId) {
         log.warn("Deleting task with ID={} in project ID={}, state ID={}", taskId, projectId, taskStateId);
-        TaskState taskState = getTaskStateFromProjectOrThrowException(projectId, taskStateId);
+        Project project = projectService.getProjectOrThrowException(projectId);
+        TaskState taskState = taskStateService.getTaskStateOrThrowException(taskStateId, project);
         Task task = getTaskOrThrowException(taskId, taskState);
+        LocalDateTime deletedTime = LocalDateTime.now();
         taskRepository.delete(task);
         log.info("Deleted task with ID={} in project ID={}, state ID={}", taskId, projectId, taskStateId);
+        kafkaProducer.sendEvent(
+                DeleteTaskEvent.builder()
+                        .projectName(project.getName())
+                        .taskStateName(taskState.getName())
+                        .taskName(task.getName())
+                        .eventType(EventType.UPDATED)
+                        .timestamp(deletedTime)
+                        .creatorId(1L)
+                        .assigneeId(1L)
+                        .taskName(task.getName())
+                        .build()
+        );
     }
-    private TaskState getTaskStateFromProjectOrThrowException(Long projectId, Long taskStateId) {
+    /*private TaskState getTaskStateFromProjectOrThrowException(Long projectId, Long taskStateId) {
         Project project = projectService.getProjectOrThrowException(projectId);
         TaskState taskState = taskStateService.getTaskStateOrThrowException(taskStateId, project);
         return taskState;
-    }
+    }*/
 
     private Task getTaskOrThrowException(Long taskId, TaskState taskState) {
         //может быть проблема если задача удалена но осталась в taskState.getTasks()

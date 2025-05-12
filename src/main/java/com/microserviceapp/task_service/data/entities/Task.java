@@ -24,5 +24,11 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id")
     private TaskState taskState;
-    private Long userId;
+    @Builder.Default
+    private Long creatorId = 1L;
+    private Long assigneeId;
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private Priority priority = Priority.LOW;
 }
+

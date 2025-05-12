@@ -53,7 +53,7 @@ public class ProjectService {
         log.info("Created project with ID={} and name={}  created", project.getId(), project.getName());
         return projectDtoFactory.makeProjectDto(project);
     }
-
+    //TODO: добавить обновление времени updatedAt
     public ProjectDto editProject(Long projectId, String newName) {
         log.debug("Editing project ID={} with new name: {}", projectId, newName);
         validateProjectName(newName);

@@ -55,7 +55,7 @@ public class TaskStateService {
         log.info("Created task state '{}' in project {}", name, projectId);
         return taskStateDtoFactory.makeTaskStateDto(taskState);
     }
-
+    //TODO: добавить обновление времени updatedAt
     public TaskStateDto editTaskState(Long projectId, Long taskStateId, String newName) {
         log.debug("Editing task state with ID={} in project ID={} on new name={}", taskStateId, projectId, newName);
         validateName(newName);
