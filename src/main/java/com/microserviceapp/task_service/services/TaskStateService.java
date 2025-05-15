@@ -52,7 +52,7 @@ public class TaskStateService {
         );
 
         project.getTaskStates().add(taskState);
-        log.info("Created task state '{}' in project {}", name, projectId);
+        log.info("Created task state with id= {} and name'{}' in project {}", taskState.getId(), name, projectId);
         return taskStateDtoFactory.makeTaskStateDto(taskState);
     }
     //TODO: добавить обновление времени updatedAt
