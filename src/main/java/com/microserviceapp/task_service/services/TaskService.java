@@ -86,7 +86,7 @@ public class TaskService {
                         .taskName(task.getName())
                         .eventType(EventType.UPDATED)
                         .timestamp(updateTime)
-                        .creatorId(1L)
+                        .creatorId(2L)
                         .assigneeId(1L)
                         .fieldName(NAME_FIELD)
                         .oldValue(oldName)

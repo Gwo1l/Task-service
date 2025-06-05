@@ -14,7 +14,7 @@ public class KafkaProducer {
     private final KafkaTemplate<String, TaskEvent> kafkaTemplate;
 
     public void sendEvent(TaskEvent event) {
-        kafkaTemplate.send("task-events", event);
+        kafkaTemplate.send("task-events", event.getCreatorId().toString(), event);
         log.info("Event with type={} sent to kafka", event.getEventType());
     }
 }

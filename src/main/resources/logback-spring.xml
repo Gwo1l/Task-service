@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <!-- Формат вывода в консоль -->
     <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
 
-    <!-- Вывод в консоль -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${CONSOLE_LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <!-- Вывод в файл (размер файла ограничен 10MB) -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/task-service.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -23,12 +20,10 @@
         </encoder>
     </appender>
 
-    <!-- Уровень логирования -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>
 
-    <!-- Логирование для ваших пакетов -->
     <logger name="com.microserviceapp.task_service" level="DEBUG"/>
 </configuration>
